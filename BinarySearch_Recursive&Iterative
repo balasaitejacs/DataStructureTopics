@@ -1,0 +1,69 @@
+URL: https://www.youtube.com/watch?v=P3YID7liBug
+
+Question: Write C# solution for Binary Search in Recursive and Itterative functions.
+
+Note:
+Binary Array only work for sorted array
+Complexity of Binary Search: O(log n) base 2
+
+Answer:
+using System;
+
+namespace Amazon
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {            
+           //Write Code Here
+        }
+
+        //Iterative implementation
+        public static Boolean binarySearchIterative(int[] array, int x)
+        {
+            int left = 0;
+            int right = array.Length - 1;
+
+            while (left <= right)
+            {
+                int mid = left + ((right - left) / 2); //This will resovle over flow issue
+                if (array[mid] == x)
+                {
+                    return true;
+                }
+                else if (x < array[mid])
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
+            return false;
+        }
+
+        //Recursive implementation
+        public static Boolean binarySearchRecursive(int[] array, int x, int left, int right)
+        {
+            if(left > right)
+            {
+                return false;
+            }
+
+            int mid = left + ((right - left) / 2); //This will resovle over flow issue
+            if(array[mid] == x)
+            {
+                return true;
+            }
+            else if(x < array[mid])
+            {
+                return binarySearchRecursive(array, x, left, mid - 1);
+            }
+            else
+            {
+                return binarySearchRecursive(array, x, mid + 1, right);
+            }
+        }
+    }   
+}
