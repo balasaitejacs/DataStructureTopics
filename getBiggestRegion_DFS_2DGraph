@@ -1,0 +1,63 @@
+URL: https://www.youtube.com/watch?v=R4Nh-EgWjyQ
+
+Question:
+In a two dimensional matrix which is filled by 0’s and 1’s, we need to find the region with maximum 1’s. 
+we can consider in up, down, left, right and diagonal as region.
+
+Answer:
+using System;
+
+namespace Amazon
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {            
+           //Write Code Here
+        }
+
+        public static int getBiggestRegion(int[][] matrix)
+        {
+            int maxRegion = 0;
+
+            for (int row = 0; row < matrix.Length; row++)
+            {
+                for (int column = 0; column < matrix[row].Length; column++)
+                {
+                    if (matrix[row][column] == 1)
+                    {
+                        int size = getRegionSize(matrix, row, column);
+                        maxRegion = Math.Max(size, maxRegion);
+                    }
+                }
+            }
+
+            return maxRegion;
+        }
+
+        public static int getRegionSize(int[][] matrix, int row, int column)
+        {
+            if (row < 0 || column < 0 || row >= matrix.Length || column >= matrix[row].Length)
+            {
+                return 0;
+            }
+            if (matrix[row][column] == 0)
+            {
+                return 0;
+            }
+            matrix[row][column] = 0;
+            int size = 1;
+            for (int r = row - 1; r <= row + 1; r++)
+            {
+                for (int c = column - 1; c <= column + 1; c++)
+                {
+                    if (r != row || c != column)
+                    {
+                        size += getRegionSize(matrix, r, c);
+                    }
+                }
+            }
+            return size;
+        }
+    }   
+}
