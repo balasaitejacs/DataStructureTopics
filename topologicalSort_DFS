@@ -1,0 +1,106 @@
+YouTube URL: https://www.youtube.com/watch?v=Q9PIxaNGnig&index=5&list=PLqM7alHXFySEaZgcg7uRYJFBnYMLti-nh
+Code-Explanation URL: https://www.geeksforgeeks.org/topological-sorting/
+
+Question:
+Topological sorting for Directed Acyclic Graph (DAG) is a linear ordering of vertices such that for every directed edge uv, 
+vertex u comes before v in the ordering. Topological Sorting for a graph is not possible if the graph is not a DAG.
+
+Time Complexity: The above algorithm is simply DFS with an extra stack. So time complexity is same as DFS which is O(V+E).
+
+Answer:
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Practice_ConsoleApp
+{
+    class Program
+    {
+        static int[] vertices;
+        static Graph<int> graph;
+
+        static void Main(string[] args)
+        {
+            vertices = new[] { 0, 1, 2, 3, 4, 5 };
+            var edges = new[] {Tuple.Create(2,3), Tuple.Create(3,1),
+                Tuple.Create(4,0), Tuple.Create(4,1), Tuple.Create(5,0),
+                Tuple.Create(5,2)};
+
+            graph = new Graph<int>(vertices, edges);
+
+            topologicalSort();            
+
+        }
+
+        // The function to do Topological Sort. It uses recursive topologicalSortUtil() 
+        static void topologicalSort()
+        {
+            int V = vertices.Count();
+            Stack<int> stack = new Stack<int>();
+
+            // Mark all the vertices as not visited 
+            bool[] visited = new bool[V];
+            for (int i = 0; i < V; i++)
+                visited[i] = false;
+
+            // Call the recursive helper function to store Topological Sort starting from all vertices one by one 
+            for (int i = 0; i < V; i++)
+                if (visited[i] == false)
+                    topologicalSortUtil(i, visited, stack);
+
+            // Print contents of stack 
+            while (stack.Count() != 0)
+                Console.Write(stack.Pop() + " ");
+        }
+
+        // A recursive function used by topologicalSort 
+        static void topologicalSortUtil(int v, bool[] visited,
+                                 Stack<int> stack)
+        {
+            // Mark the current node as visited. 
+            visited[v] = true;
+
+            // Recur for all the vertices adjacent to this vertex 
+            foreach(var sample in graph.AdjacencyList[v])
+            {
+                if (!visited[sample])
+                    topologicalSortUtil(sample, visited, stack);
+            }
+
+            // Push current vertex to stack which stores result 
+            stack.Push(v);
+        }        
+
+    }
+
+    public class Graph<T>
+    {
+        public Graph() { }
+        public Graph(IEnumerable<T> vertices, IEnumerable<Tuple<T, T>> edges)
+        {
+            foreach (var vertex in vertices)
+                AddVertex(vertex);
+
+            foreach (var edge in edges)
+                AddEdge(edge);
+        }
+
+        public Dictionary<T, HashSet<T>> AdjacencyList { get; } = new Dictionary<T, HashSet<T>>();
+
+        public void AddVertex(T vertex)
+        {
+            AdjacencyList[vertex] = new HashSet<T>();
+        }
+
+        public void AddEdge(Tuple<T, T> edge)
+        {
+            if (AdjacencyList.ContainsKey(edge.Item1) && AdjacencyList.ContainsKey(edge.Item2))
+            {
+                AdjacencyList[edge.Item1].Add(edge.Item2);
+
+                //For directed graph, the below line should be commented. But for undirected graph, the below line should be uncommented.
+                //AdjacencyList[edge.Item2].Add(edge.Item1);
+            }
+        }
+    }
+}
