@@ -1,0 +1,134 @@
+Youtube URL: https://www.youtube.com/watch?v=gTt5idzVCgA&index=10&list=PLqM7alHXFySEaZgcg7uRYJFBnYMLti-nh
+Code-Explanation URL: https://www.geeksforgeeks.org/find-a-mother-vertex-in-a-graph/
+
+Question:
+A mother vertex in a graph G = (V,E) is a vertex v such that all other vertices in G can be reached by a path from v.
+
+Time Complexity: O(V+E) + O(V+E) = O(V+E)
+
+Answer:
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
+
+namespace Practice_ConsoleApp
+{
+    class Program
+    {
+        static int[] vertices;
+        static Graph<int> graph;
+
+        static void Main(string[] args)
+        {
+            vertices = new[] { 0, 1, 2, 3, 4, 5, 6 };
+            var edges = new[] {Tuple.Create(0,1), Tuple.Create(0,2),
+                    Tuple.Create(1,3), Tuple.Create(4,1), Tuple.Create(6,4),
+            Tuple.Create(5,6), Tuple.Create(5,2), Tuple.Create(6,0)};
+
+            graph = new Graph<int>(vertices, edges);
+            var result = findMother(vertices.Count());
+            //int[,] matrix = new int[,] { { 1, 0, 0 }, { 1, 0, 0 }, { 1, 9, 1 } };
+
+            //var result = calcProbability(matrix, 4);
+        }
+
+        static int findMother(int V)
+        {
+            // visited[] is used for DFS. Initially all are 
+            // initialized as not visited 
+            bool[] visited = new bool[V];
+
+            // To store last finished vertex (or mother vertex) 
+            int v = 0;
+
+            // Do a DFS traversal and find the last finished 
+            // vertex   
+            for (int i = 0; i < V; i++)
+            {
+                if (visited[i] == false)
+                {
+                    DFSUtil(i, visited);
+                    v = i;
+                }
+            }
+
+            // If there exist mother vertex (or vetices) in given 
+            // graph, then v must be one (or one of them) 
+
+            // Now check if v is actually a mother vertex (or graph 
+            // has a mother vertex).  We basically check if every vertex 
+            // is reachable from v or not. 
+
+            // Reset all values in visited[] as false and do  
+            // DFS beginning from v to check if all vertices are 
+            // reachable from it or not. 
+            for (int i = 0; i < V; i++)
+            {
+                visited[i] = false;
+            }
+
+            DFSUtil(v, visited);
+            for (int i = 0; i < V; i++)
+                if (visited[i] == false)
+                    return -1;
+
+            return v;
+        }
+
+        // A recursive function to print DFS starting from v 
+        static void DFSUtil(int v, bool[] visited)
+        {
+            // Mark the current node as visited and print it 
+            visited[v] = true;
+            Console.WriteLine(v);
+
+            // Recur for all the vertices adjacent to this vertex 
+            foreach (var sample in graph.AdjacencyList[v])
+                if (!visited[sample])
+                    DFSUtil(sample, visited);
+        }
+
+        //public static int calcProbability(int[,] matrix, int N)
+        //{
+        //    //We are solving this problem using Depth First Search
+        //    int sr = 0; //sourcerow
+        //    int sc = 0; //sourcecolumn
+
+
+        //}
+
+
+    }
+
+    public class Graph<T>
+    {
+        public Graph() { }
+        public Graph(IEnumerable<T> vertices, IEnumerable<Tuple<T, T>> edges)
+        {
+            foreach (var vertex in vertices)
+                AddVertex(vertex);
+
+            foreach (var edge in edges)
+                AddEdge(edge);
+        }
+
+        public Dictionary<T, HashSet<T>> AdjacencyList { get; } = new Dictionary<T, HashSet<T>>();
+
+        public void AddVertex(T vertex)
+        {
+            AdjacencyList[vertex] = new HashSet<T>();
+        }
+
+        public void AddEdge(Tuple<T, T> edge)
+        {
+            if (AdjacencyList.ContainsKey(edge.Item1) && AdjacencyList.ContainsKey(edge.Item2))
+            {
+                AdjacencyList[edge.Item1].Add(edge.Item2);
+
+                //For directed graph, the below line should be commented. But for undirected graph, the below line should be uncommented.
+                //AdjacencyList[edge.Item2].Add(edge.Item1);
+            }
+        }
+    }
+}
