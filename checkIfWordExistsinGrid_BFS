@@ -1,0 +1,127 @@
+URL: https://www.geeksforgeeks.org/check-if-a-word-exists-in-a-grid-or-not/
+
+Question:
+Check if a word exists in a grid or not
+Given a 2D grid of characters and a word, the task is to check if that word exists in the grid or not. 
+A word can be matched in 4 directions at any point.
+The 4 directions are, Horizontally Left and Right, Vertically Up and Down.
+
+Answer:
+using System.Collections;
+
+namespace Amazon
+{
+    class Program
+    {
+        static int[] dr = { -1, +1, 0, 0 };
+        static int[] dc = { 0, 0, +1, -1 };
+
+        static Queue rq = new Queue(); //rowqueue
+        static Queue cq = new Queue(); //columnqueue
+
+        static int move_count = 0; //keep track of number of steps taken to reach destination
+        static int nodes_left_in_layer = 1; //tracks how many nodes we dequeue before taking a step
+        static int nodes_in_next_layer = 0; //tracks how many nodes we added in BFS expansion
+
+        static string wordGathering = string.Empty;
+        static string[] result = new string[5];
+
+        static void Main(string[] args)
+        {
+            //Test Case: 1
+            //int[,] lot = new int[,] { { 1, 0, 0 }, { 1, 0, 0 }, { 1, 9, 1 } };
+            //var result = removeObstacle(3, 3, lot);
+
+            //Test Case: 2
+            char[,] grid = new char[,] { { 'a', 'x', 'm', 'y' }, { 'b', 'g', 'd', 'f' }, { 'x', 'e', 'e', 't' }, { 'r', 'a', 'k', 's' }};
+            var result = checkIfWordExistsinGrid(4, 4, grid, "geeks");
+        }
+
+        public static int checkIfWordExistsinGrid(int numRows, int numColumns, char[,] grid, string word)
+        {            
+            if (numRows < 1 || numRows > 1000 || numColumns > 1000 || numColumns < 1)
+                return -1;
+            //We are solving this problem using Breath First Search
+            int sr = 1; //sourcerow where first char in word 'g' exists
+            int sc = 1; //sourcecolumn where first char in word 'g' exists
+
+            bool reached_end = false; //tracks do we reach the end cell or not
+            bool[,] visited = new bool[numRows, numColumns]; //Need this to track if a cell is visied or not
+
+            //North, South, East, West (OR) Up, Down, Right, Left direction vectors
+            int[] dr = { -1, +1, 0, 0 };
+            int[] dc = { 0, 0, +1, -1 };
+
+            #region solve
+            rq.Enqueue(sr);
+            cq.Enqueue(sc);
+
+            visited[sr, sc] = true;
+
+            while (rq.Count > 0) //OR rq.Count > 0 (Because these two sizes should always be in sync)
+            {
+                int r = (int)rq.Dequeue();
+                int c = (int)cq.Dequeue();
+
+                wordGathering = wordGathering + grid[r, c];
+
+                if (wordGathering == word)
+                {
+                    reached_end = true;
+                    return move_count;
+                }
+                explore_neighbours(r, c, visited, grid, numRows, numColumns, word, wordGathering);
+
+                nodes_left_in_layer--;
+                if (nodes_left_in_layer == 0)
+                {
+                    nodes_left_in_layer = nodes_in_next_layer;
+                    nodes_in_next_layer = 0;
+                    move_count++;
+                    //result[move_count] = 
+                }
+
+                if (reached_end)
+                {
+                    return move_count;
+                }
+            }
+
+            return -1;
+            #endregion
+        }
+
+        public static void explore_neighbours(int r, int c, bool[,] visited, char[,] grid, int numRows, int numColumns, string word, string wordGathering)
+        {
+            int rr = 0; //new row co-ordinates by adding direction vectors
+            int cc = 0; //new column co-ordinates by adding direction vectors
+
+            for (int i = 0; i < 4; i++)
+            {
+                rr = r + dr[i];
+                cc = c + dc[i];
+
+                //skip out of bounds locations
+                if (rr < 0 || cc < 0)
+                    continue;
+                if (rr >= numRows || cc >= numColumns)
+                    continue;
+
+                //skip visited locations
+                if (visited[rr, cc])
+                    continue;
+
+                char currentChar = word[wordGathering.Length];
+
+                //skip blocked cells
+                if (grid[rr, cc] != currentChar)
+                    continue;
+
+                rq.Enqueue(rr);
+                cq.Enqueue(cc);
+                visited[rr, cc] = true;
+                nodes_in_next_layer++;
+            }
+        }
+    }
+}
