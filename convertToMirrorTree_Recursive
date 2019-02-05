@@ -1,0 +1,66 @@
+URL: https://www.geeksforgeeks.org/write-an-efficient-c-function-to-convert-a-tree-into-its-mirror-tree/
+
+Question:
+Convert a Binary Tree into its Mirror Tree
+Mirror of a Tree: Mirror of a Binary Tree T is another Binary Tree M(T) 
+with left and right children of all non-leaf nodes interchanged.
+
+Answer:
+using System;
+using System.Collections;
+using static Amazon.BinaryTree;
+
+namespace Amazon
+{
+    class Program
+    {
+        BinaryTree mirrorTree = new BinaryTree();
+        static void Main(string[] args)
+        {
+            BinaryTree tree1 = new BinaryTree();
+            tree1.root = new Node(1);
+
+            tree1.root.left = new Node(3);
+            tree1.root.right = new Node(2);
+
+            tree1.root.right.left = new Node(5);
+            tree1.root.right.right = new Node(4);
+
+            var result = convertToMirrorTree(tree1.root);
+        }
+
+        public static Node convertToMirrorTree(Node root)
+        {            
+            /* If tree is empty then return true */
+            if (root == null)
+            {
+                return root;
+            }
+
+            convertToMirrorTree(root.left);
+            convertToMirrorTree(root.right);
+
+            Node temp = root.left;
+            root.left = root.right;
+            root.right = temp;
+
+            return root;
+        }
+    }
+
+    public class BinaryTree
+    {
+        public Node root;        
+        
+        public class Node
+        {
+            public int data;
+            public Node left, right;
+            public Node(int d)
+            {
+                data = d;
+                left = right = null;
+            }
+        }
+    }
+}
