@@ -1,0 +1,117 @@
+URL: https://www.geeksforgeeks.org/tree-isomorphism-problem/
+
+Question:
+Tree Isomorphism Problem
+Write a function to detect if two trees are isomorphic. 
+Two trees are called isomorphic if one of them can be obtained from other by a series of flips, 
+i.e. by swapping left and right children of a number of nodes. 
+Any number of nodes at any level can have their children swapped. 
+Two empty trees are isomorphic.
+
+Time Complexity: The above solution does a traversal of both trees. 
+So time complexity is O(min(m,n)*2) or O(min(m,n)) where m and n are number of nodes in given trees.
+
+Answer:
+using System;
+using System.Collections;
+using static Amazon.BinaryTree;
+
+namespace Amazon
+{
+    class Program
+    {        
+        static void Main(string[] args)
+        {
+            BinaryTree tree1 = new BinaryTree();
+            tree1.root = new Node(1);
+
+            tree1.root.left = new Node(2);
+            tree1.root.right = new Node(3);
+
+            tree1.root.left.left = new Node(4);
+            tree1.root.left.right = new Node(5);
+            tree1.root.right.left = new Node(6);
+            
+            tree1.root.left.right.left = new Node(7);
+            tree1.root.left.right.right = new Node(8);
+
+            BinaryTree tree2 = new BinaryTree();
+            tree2.root = new Node(1);
+
+            tree2.root.left = new Node(3);
+            tree2.root.right = new Node(2);
+
+            tree2.root.left.right = new Node(6);
+            tree2.root.right.left = new Node(4);
+            tree2.root.right.right = new Node(5);
+
+            tree2.root.right.right.left = new Node(8);
+            tree2.root.right.right.right = new Node(7);
+
+            if (isIsomorphed(tree1.root, tree2.root))
+            {
+                Console.WriteLine("Tree is Isomorphism tree");
+            }
+            else
+            {
+                Console.WriteLine("Tree is not Isomorphism tree");
+            }            
+        }
+
+        public static bool isIsomorphed(Node tree1Root, Node tree2Root)
+        {            
+            /* If tree is empty then return true */
+            if (tree1Root == null && tree2Root == null)
+            {
+                //height.height = 0;
+                return true;
+            }
+
+            // Exactly one of the n1 and n2 is NULL, trees not isomorphic  
+            if (tree1Root == null || tree2Root == null)
+            {
+                return false;
+            }
+
+            if (tree1Root.data != tree2Root.data)
+            {
+                return false;
+            }
+
+            // Data of n1 and n2 is same
+            bool cond0 = (tree1Root.data == tree2Root.data);
+
+            //Left child of n1 is isomorphic to left child of n2 and right child of n1 is isomorphic to right child of n2
+            bool cond1 = (isIsomorphed(tree1Root.left, tree2Root.left)) && (isIsomorphed(tree1Root.right, tree2Root.right));
+
+            //Left child of n1 is isomorphic to right child of n2 and right child of n1 is isomorphic to left child of n2
+            bool cond2 = (isIsomorphed(tree1Root.left, tree2Root.right)) && (isIsomorphed(tree1Root.right, tree2Root.left));
+
+            if (cond0 && (cond1 || cond2))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+    }
+
+    public class BinaryTree
+    {
+        public Node root;        
+        
+        public class Node
+        {
+            public int data;
+            public Node left, right;
+            public Node(int d)
+            {
+                data = d;
+                left = right = null;
+            }
+        }
+    }
+}
