@@ -1,0 +1,128 @@
+This Question is from Youtube video 'Amazon Interview Questions - 1|GreeksforGreeks'
+It is second question in video(Time: 1:30 to 3:00)
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Amazon
+{
+    
+    class Program
+    {
+        //public static Queue queue = new Queue();
+        public static int maxNodes= 0;
+        static void Main(string[] args)
+        {
+            //Height height = new Height();
+
+            /* Constructed binary tree is  
+                       1  
+                     /   \  
+                    2      3  
+                  /  \    /  \
+                4     5  7    6
+                        
+                        */
+            BinaryTree tree = new BinaryTree();
+            tree.root = new Node(1);
+            tree.root.left = new Node(2);
+            tree.root.right = new Node(3);
+            tree.root.left.left = new Node(4);
+            tree.root.left.right = new Node(5);
+            tree.root.right.right = new Node(6);
+            tree.root.right.left = new Node(7);
+
+            printLevelOrder(tree.root);
+
+            Console.WriteLine("Final max Nodes: " + maxNodes.ToString());
+        }
+
+        //maximumWidthOfBinaryTree
+        //Print level by level. It can help to find the level/height of each node.
+        public static void printLevelOrder(Node root)
+        {
+            // Create an empty queue for level  
+            // order tarversal  
+            Queue<Node> q = new Queue<Node>();
+
+            // Enqueue Root and initialize height  
+            q.Enqueue(root);
+
+            while (true)
+            {
+
+                // nodeCount (queue size) indicates  
+                // number of nodes at current level.  
+                int nodeCount = q.Count;
+                if (nodeCount == 0)
+                    break;
+
+                // Dequeue all nodes of current level  
+                // and Enqueue all nodes of next level  
+                while (nodeCount > 0)
+                {
+                    Node node = q.Peek();
+                    Console.Write(node.data + " ");
+                    q.Dequeue();
+                    if (node.left != null)
+                        q.Enqueue(node.left);
+                    if (node.right != null)
+                        q.Enqueue(node.right);
+                    nodeCount--;
+                    maxNodes = (maxNodes > q.Count) ? maxNodes : q.Count;
+                }
+                Console.WriteLine();
+            }
+        }
+
+        //maximumWidthOfBinaryTree
+        //This will print level by level. We can use this if we don't want level/height of each node.
+        //public static void printLevelOrder(Node root)
+        //{
+        //    Queue<Node> queue = new Queue<Node>();        
+        //    queue.Enqueue(root);
+
+        //    maxNodes = (maxNodes > queue.Count) ? maxNodes : queue.Count;
+
+        //    while (queue.Count != 0)
+        //    {                
+        //        Node tempNode = queue.Dequeue();
+        //        Console.Write(tempNode.data + " ");
+
+        //        /*Enqueue left child */
+        //        if (tempNode.left != null)
+        //        {
+        //            queue.Enqueue(tempNode.left);
+        //        }
+
+        //        /*Enqueue right child */
+        //        if (tempNode.right != null)
+        //        {
+        //            queue.Enqueue(tempNode.right);
+        //        }
+        //        maxNodes = (maxNodes > queue.Count) ? maxNodes : queue.Count;
+        //    }
+        //}
+
+    }
+
+    public class BinaryTree
+    {
+        public Node root;      
+    }
+
+    public class Node
+    {
+        public int data;
+        public Node left, right;
+        public Node(int d)
+        {
+            data = d;
+            left = right = null;
+        }
+    }
+}
+
