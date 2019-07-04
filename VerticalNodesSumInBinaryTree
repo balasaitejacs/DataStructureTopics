@@ -1,0 +1,91 @@
+Question from Youtube Video named 'Amazon Interview Questions - 1 | GreeksforGreeks'.
+This is first question in Video (Time: 0.00 - 1.30)
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Amazon
+{
+    
+    class Program
+    {
+        public static Hashtable hashTable = new Hashtable();
+        static void Main(string[] args)
+        {
+            //Height height = new Height();
+
+            /* Constructed binary tree is  
+                       1  
+                     /   \  
+                    2      3  
+                  /  \    /  \
+                4     5  7    6
+                        
+                        */
+            BinaryTree tree = new BinaryTree();
+            tree.root = new Node(1);
+            tree.root.left = new Node(2);
+            tree.root.right = new Node(3);
+            tree.root.left.left = new Node(4);
+            tree.root.left.right = new Node(5);
+            tree.root.right.right = new Node(6);
+            tree.root.right.left = new Node(7);
+            
+            int hashTableIndex = 0;
+
+            PreOrderTraversal(tree.root, hashTableIndex);
+
+            // Get a collection of the keys.
+            ICollection key = hashTable.Keys;
+
+            foreach (var k in key)
+            {
+                Console.WriteLine(k + ": " + hashTable[k]);
+            }
+
+        }
+
+        //VerticalNodesSumInBinaryTree
+        public static void PreOrderTraversal(Node root, int hashTableIndex)
+        {
+            if (root == null) return;
+
+            Console.WriteLine("PreOrderTraversal at node {0}, Hash Table Index is {1}", root.data, hashTableIndex); // process the root            
+
+            if (hashTable.ContainsKey(hashTableIndex))
+            {
+                hashTable[hashTableIndex] = Convert.ToInt32(hashTable[hashTableIndex]) + root.data;                
+            }
+            else
+            {
+                hashTable.Add(hashTableIndex, root.data);
+            }
+           
+            int leftHashTableIndex = hashTableIndex - 1;
+            int rightHashTableIndex = hashTableIndex + 1;
+            PreOrderTraversal(root.left, leftHashTableIndex);// process the left
+            PreOrderTraversal(root.right, rightHashTableIndex);// process the right
+        }        
+
+    }
+
+    public class BinaryTree
+    {
+        public Node root;      
+    }
+
+    public class Node
+    {
+        public int data;
+        public Node left, right;
+        public Node(int d)
+        {
+            data = d;
+            left = right = null;
+        }
+    }
+}
+
