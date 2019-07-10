@@ -20,6 +20,10 @@ namespace Amazon
          * Note that the above code uses Binary Heap for Priority Queue implementation. 
          * Time complexity can be reduced to O(E + VLogV) using Fibonacci Heap. 
          * The reason is, Fibonacci Heap takes O(1) time for decrease-key operation while Binary Heap takes O(Logn) time.
+         * 
+         * Heap Data Structure URL: https://www.geeksforgeeks.org/heap-data-structure/
+         * Min-Heap: In a Min-Heap the key present at the root node must be minimum among the keys present at all of it’s children. 
+         * The same property must be recursively true for all sub-trees in that Binary Tree.
          */
 
         #region Global Members
@@ -155,7 +159,7 @@ namespace Amazon
             return minHeap.size;
         }
 
-        // Standard function to extract minimum node from heap 
+        // Standard function to extract/remove and get minimum node from heap 
         private static MinHeapNode extractMin(MinHeap minHeap)
         {
             if (isEmpty(minHeap) == 0)
@@ -193,6 +197,7 @@ namespace Amazon
 
             // Travel up while the complete tree is not hepified. 
             // This is a O(Logn) loop 
+            //Min Heap: root node must be minimum than it's Child node. If not, we need to swap them
             while (i != 0 && minHeap.array[i].dist < minHeap.array[(i - 1) / 2].dist)
             {
                 // Swap this node with its parent 
@@ -271,8 +276,11 @@ namespace Amazon
             }
 
             // Make dist value of src vertex as 0 so that it is extracted first 
+            //May be redundant
             minHeap.array[src] = newMinHeapNode(src, dist[src]);
             minHeap.pos[src] = src;
+            //---------------------
+
             dist[src] = 0;
             decreaseKey(minHeap, src, dist[src]);
 
