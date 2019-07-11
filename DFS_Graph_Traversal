@@ -1,0 +1,90 @@
+/*
+URL: https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/
+Similar format for BFS: https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+Time Complexity: O(V+E) where V is number of vertices in the graph and E is number of edges in the graph.
+This will work for disconnected graph also.
+*/
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace Amazon
+{
+    public class DFS_Graph_Traversal
+    {
+        private int V; // No. of vertices
+        private LinkedList<int>[] adj; // Pointer to an array containing adjacency lists
+
+        static void Main(string[] args)
+        {
+            // Create a graph given in the above diagram 
+            DFS_Graph_Traversal g = new DFS_Graph_Traversal(4);
+            g.addEdge(0, 1);
+            g.addEdge(0, 2);
+            g.addEdge(1, 2);
+            g.addEdge(2, 0);
+            g.addEdge(2, 3);
+            g.addEdge(3, 3);
+
+            Console.Write("Following is Depth First Traversal: ");
+            g.DFS();
+        }
+
+        private void DFSUtil(int v, bool[] visited)
+        {
+            // Mark the current node as visited and print it
+            visited[v] = true;
+            Console.Write(v);
+            Console.Write(" ");
+
+            // Recur for all the vertices adjacent to this vertex
+            LinkedList<int>.Enumerator i;
+            for (i = adj[v].GetEnumerator(); i.MoveNext();)
+            {
+                if (!visited[i.Current])
+                {
+                    DFSUtil(i.Current, visited);
+                }
+            }
+        }
+
+        public DFS_Graph_Traversal(int V)
+        {
+            this.V = V;
+
+            LinkedList<int>[] array = new LinkedList<int>[V];
+            for (int i = 0; i < V; i++)
+            {
+                array[i] = new LinkedList<int>();
+            }
+            adj = array;
+        }
+
+        public void addEdge(int v, int w)
+        {
+            adj[v].AddLast(w); // Add w to v’s list.
+        }
+
+
+        // The function to do DFS traversal. It uses recursive DFSUtil() 
+        public void DFS()
+        {
+            // Mark all the vertices as not visited
+            bool[] visited = new bool[V];
+            for (int i = 0; i < V; i++)
+            {
+                visited[i] = false;
+            }
+
+            // Call the recursive helper function to print DFS traversal
+            // starting from all vertices one by one
+            for (int i = 0; i < V; i++)
+            {
+                if (visited[i] == false)
+                {
+                    DFSUtil(i, visited);
+                }
+            }
+        }
+    }
+}
