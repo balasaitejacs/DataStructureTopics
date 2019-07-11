@@ -1,0 +1,143 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Amazon
+{
+    class insertNodeInSortedCircularLinkedList
+    {
+        static void Main(string[] args)
+        {
+            Node n1 = new Node();
+            Node n3 = new Node();
+            Node n4 = new Node();
+
+            n1.data = 1;
+            n1.next = n3;
+
+            n3.data = 3;
+            n3.next = n4;
+
+            n4.data = 4;
+            n4.next = n1;
+
+            var linkedList = new LinkedList();
+
+            Node newNode = new Node();
+            newNode.data = 0;
+            newNode.next = null;
+
+            insertNodeInSortedCircularLinkedList(newNode, ref n1);
+
+            linkedList.head = n1;
+            while (linkedList.head.next != n1)
+            {
+                Console.WriteLine(linkedList.head.data);
+                linkedList.head = linkedList.head.next;
+            }
+            Console.WriteLine(linkedList.head.data);
+        }
+
+        //Time Complexity: O(n) where n is the number of nodes in the given linked list.
+
+        /*
+            Algorithm:
+            Allocate memory for the newly inserted node and put data in the newly allocated node. Let the pointer to the new node be new_node. After memory allocation, following are the three cases that need to be handled.
+
+            1) Linked List is empty:  
+            a)  since new_node is the only node in CLL, make a self loop.      
+                    new_node->next = new_node;  
+            b) change the head pointer to point to new node.
+                    *head_ref = new_node;
+            2) New node is to be inserted just before the head node:    
+            (a) Find out the last node using a loop.
+                    while(current->next != *head_ref)
+                    current = current->next;
+            (b) Change the next of last node. 
+                    current->next = new_node;
+            (c) Change next of new node to point to head.
+                    new_node->next = *head_ref;
+            (d) change the head pointer to point to new node.
+                    *head_ref = new_node;
+            3) New node is to be  inserted somewhere after the head: 
+            (a) Locate the node after which new node is to be inserted.
+                    while ( current->next!= *head_ref && 
+                        current->next->data data)
+                    {   current = current->next;   }
+            (b) Make next of new_node as next of the located pointer
+                    new_node->next = current->next;
+            (c) Change the next of the located pointer
+                    current->next = new_node; 
+         */
+
+        public static void insertNodeInSortedCircularLinkedList(Node new_node, ref Node head)
+        {
+            Node current = head;
+
+            // Case 1 of the above algo  
+            if (current == null)
+            {
+                new_node.next = new_node;
+                head = new_node;
+
+            }
+
+            // Case 2 of the above algo  
+            else if (current.data >= new_node.data)
+            {
+                //This works but below is optimized way
+                ///* If value is smaller than 
+                //    head's value then we need 
+                //    to change next of last node */
+                //while (current.next != head)
+                //    current = current.next;
+
+                //current.next = new_node;
+                //new_node.next = head;
+                //head = new_node;
+
+                //This is optimized than above
+                // swap the data part of head node and new node 
+                int temp = current.data;
+                current.data = new_node.data;
+                new_node.data = temp;
+                //swap(current.data, new_node.data);
+
+                new_node.next = head.next;
+                head.next = new_node;
+            }
+
+            // Case 3 of the above algo  
+            else
+            {
+                /* Locate the node before  
+                the point of insertion */
+                while (current.next != head &&
+                    current.next.data < new_node.data)
+                    current = current.next;
+
+                new_node.next = current.next;
+                current.next = new_node;
+            }
+        }
+    }
+
+    public class BinaryTree
+    {
+        public Node root;
+    }
+
+    public class Node
+    {
+        public Node next;
+        public int data;    //datatype(int) will change based on type of data we want to store    
+    }
+
+    public class LinkedList
+    {
+        public Node head;
+    }
+}
+
