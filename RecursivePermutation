@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Amazon
+{
+    class RecursivePermutation
+    {
+        static void Main(string[] args)
+        {
+            int[] nums = { 1, 2, 3 };
+            var result = permute(nums);
+        }
+
+        public static List<List<int>> permute(int[] nums)
+        {
+            List<List<int>> pms = new List<List<int>>();
+            rP(nums, new bool[nums.Length], new List<int>(), pms);
+            return pms;
+        }
+
+        public static void rP(int[] nums, bool[] set, List<int> pm, List<List<int>> pms)
+        {
+            if (pm.Count() == nums.Length)
+            {
+                pms.Add(pm);
+                return;
+            }
+
+            for (int i = 0; i < nums.Length; ++i)
+            {
+                if (set[i]) continue;
+                set[i] = true;
+                List<int> currPm = new List<int>(pm);
+                currPm.Add(nums[i]);
+                rP(nums, set, currPm, pms);
+                set[i] = false;
+            }
+        }
+    }
+}
