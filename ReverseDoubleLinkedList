@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Amazon
+{
+    class ReverseDoubleLinkedList
+    {
+        static void Main(string[] args)
+        {
+            DoubleLinkedList headNode = new DoubleLinkedList();
+            DoubleLinkedList node2 = new DoubleLinkedList();
+            node2.data = 2;
+
+            DoubleLinkedList node3 = new DoubleLinkedList();
+            node3.data = 3;
+
+            DoubleLinkedList node4 = new DoubleLinkedList();
+            node4.data = 4;
+
+            DoubleLinkedList node5 = new DoubleLinkedList();
+            node5.data = 5;
+
+            headNode.data = 1;
+            headNode.next = node2;
+            headNode.prev = null;
+
+            node2.next = node3;
+            node2.prev = headNode;
+
+            node3.next = node4;
+            node3.prev = node2;
+
+            node4.next = node5;
+            node4.prev = node3;
+
+            node5.next = null;
+            node5.prev = node4;
+
+            var result = reverseDoubleLinkedList(headNode);
+
+        }
+
+        public static DoubleLinkedList reverseDoubleLinkedList(DoubleLinkedList headNode)
+        {
+            DoubleLinkedList newHeadNode = null;
+
+            if (headNode == null)
+                return null;
+
+            DoubleLinkedList currentNode = headNode;
+            while (currentNode != null)
+            {
+                DoubleLinkedList prevNode = currentNode.prev;
+                currentNode.prev = currentNode.next;
+                currentNode.next = prevNode;
+
+                newHeadNode = currentNode;
+
+                currentNode = currentNode.prev;
+            }
+
+            return newHeadNode;
+        }
+
+        public class DoubleLinkedList
+        {
+            public int data;
+            public DoubleLinkedList prev;
+            public DoubleLinkedList next;
+        }
+    }
+}
