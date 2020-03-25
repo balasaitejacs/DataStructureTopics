@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Amazon
+{
+    public class V
+    {
+        public int idx;
+        public int len;
+        public int stops;
+
+        public V(int i, int l, int s)
+        {
+            idx = i;
+            len = l;
+            stops = s;
+        }
+    }
+
+    public class Great
+    {
+        public static bool functorMethod(V a, V b)
+        {
+            return a.len > b.len;
+        }
+    }
+
+    public class Solution
+    {
+        static void Main(string[] args)
+        {
+            var edges = new List<List<int>>{
+                new List<int> { 0, 1, 100},
+                new List<int> { 1, 2, 100},
+                new List<int> { 0, 2, 500}
+            };
+            var res = findCheapestPrice(3, edges, 0, 2, 1);
+        }
+        public static int findCheapestPrice(int n, List<List<int>> flights, int src, int dst, int K)
+        {
+            List<int> dist = VectorHelper.InitializedList(n, int.MaxValue);
+            List<int> stop_table = VectorHelper.InitializedList(n, int.MaxValue);
+            //priority_queue<V, List<V>, Great> pq = new priority_queue<V, List<V>, Great>();
+            Queue<V> pq = new Queue<V>();
+
+              V src_v = new V(src, 0, -1);
+            dist[src] = 0;
+            stop_table[src] = -1;
+            pq.Enqueue(src_v);
+
+            Dictionary<int, List<Tuple<int, int>>> adj_table = new Dictionary<int, List<Tuple<int, int>>>();
+            foreach (List<int> v in flights)
+            {
+                int s = v[0];
+                int d = v[1];
+                int w = v[2];
+                //adj_table[s].Add(Tuple.Create(d, w));
+                if (adj_table.ContainsKey(s))
+                {
+                    adj_table[s].Add(Tuple.Create(d, w));
+                }
+                else
+                {
+                    adj_table.Add(s, new List<Tuple<int, int>> { Tuple.Create(d, w) });
+                }
+                
+            }
+
+            while (pq.Count() != 0)
+            {
+                V cur_v = pq.Peek();
+                pq.Dequeue();
+
+                if (cur_v.stops >= K)
+                {
+                    continue;
+                }
+
+                n = cur_v.idx;
+                int l = cur_v.len;
+                int s = cur_v.stops;
+
+                for (int i = 0; (adj_table.ContainsKey(n) && i < adj_table[n].Count); i++)
+                {
+                    int d = adj_table[n][i].Item1;
+                    int w = adj_table[n][i].Item2;
+
+                    if (dist[d] > l + w)
+                    {
+                        /* shorter distance */
+                        dist[d] = l + w;
+                        V next_v = new V(d, dist[d], s + 1);
+                        if (s + 1 < stop_table[d])
+                        {
+                            stop_table[d] = s + 1;
+                        }
+                        pq.Enqueue(next_v);
+                    }
+                    else if (s + 1 < stop_table[d])
+                    {
+                        /* fewer stops */
+                        stop_table[d] = s + 1;
+                        V next_v = new V(d, l + w, s + 1);
+                        pq.Enqueue(next_v);
+                    }
+                }
+            }
+
+            return dist[dst] == int.MaxValue ? -1 : dist[dst];
+        }
+    }
+
+//Helper class added by C++ to C# Converter:
+
+//----------------------------------------------------------------------------------------
+//	Copyright © 2006 - 2019 Tangible Software Solutions, Inc.
+//	This class can be used by anyone provided that the copyright notice remains intact.
+//
+//	This class is used to convert some of the C++ std::vector methods to C#.
+//----------------------------------------------------------------------------------------
+
+
+
+internal static class VectorHelper
+    {
+        public static void Resize<T>(this List<T> list, int newSize, T value = default(T))
+        {
+            if (list.Count > newSize)
+                list.RemoveRange(newSize, list.Count - newSize);
+            else if (list.Count < newSize)
+            {
+                for (int i = list.Count; i < newSize; i++)
+                {
+                    list.Add(value);
+                }
+            }
+        }
+
+        public static void Swap<T>(this List<T> list1, List<T> list2)
+        {
+            List<T> temp = new List<T>(list1);
+            list1.Clear();
+            list1.AddRange(list2);
+            list2.Clear();
+            list2.AddRange(temp);
+        }
+
+        public static List<T> InitializedList<T>(int size, T value)
+        {
+            List<T> temp = new List<T>();
+            for (int count = 1; count <= size; count++)
+            {
+                temp.Add(value);
+            }
+
+            return temp;
+        }
+
+        public static List<List<T>> NestedList<T>(int outerSize, int innerSize)
+        {
+            List<List<T>> temp = new List<List<T>>();
+            for (int count = 1; count <= outerSize; count++)
+            {
+                temp.Add(new List<T>(innerSize));
+            }
+
+            return temp;
+        }
+
+        public static List<List<T>> NestedList<T>(int outerSize, int innerSize, T value)
+        {
+            List<List<T>> temp = new List<List<T>>();
+            for (int count = 1; count <= outerSize; count++)
+            {
+                temp.Add(InitializedList(innerSize, value));
+            }
+
+            return temp;
+        }
+    }
+}
